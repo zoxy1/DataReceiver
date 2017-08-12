@@ -41,6 +41,7 @@ public class DataReceiver extends JFrame {
     private JButton cancel = new JButton("Cancel");
     private File filePicture;
     private BufferedImage bufferedImage;
+    private GraphicsPanel graphicsPanel = new GraphicsPanel();
 
     void init() {
         JFrame.setDefaultLookAndFeelDecorated(true);
@@ -156,7 +157,7 @@ public class DataReceiver extends JFrame {
                 filePathPanel.setLayout(new GridBagLayout());
                 frame.add(filePathPanel, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(1, 1, 1, 1), 0, 0));
 
-                imagePanel.setBorder(BorderFactory.createCompoundBorder(
+                graphicsPanel.setBorder(BorderFactory.createCompoundBorder(
                         BorderFactory.createLineBorder(Color.gray, 2),
                         BorderFactory.createEmptyBorder(1, 1, 1, 1)));
 
@@ -176,7 +177,7 @@ public class DataReceiver extends JFrame {
                 /*imagePanel.setAutoscrolls(true);
                 imagePanel.setMinimumSize(new Dimension(163, 100));
                 imagePanel.setPreferredSize(new Dimension(490, 300));*/
-                frame.add(imagePanel, gridBagConstraints);
+                frame.add(graphicsPanel, gridBagConstraints);
 
                 startReceivePictureButton.setLayout(new GridBagLayout());
                 frame.add(startReceivePictureButton, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.LAST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 0, 0));
@@ -313,7 +314,7 @@ public class DataReceiver extends JFrame {
 
                 if (serialPortOpen.isOpened()) {
                     UICallback ui = new UICallbackImpl();
-                    loaderPicture = new SwingWorkerLoaderPicture(ui, filePicture, serialPortOpen, imagePanel, bufferedImage);
+                    loaderPicture = new SwingWorkerLoaderPicture(ui, filePicture, serialPortOpen, graphicsPanel);
                     loaderPicture.execute();
                     loaderPicture.addPropertyChangeListener(new PropertyChangeListener() {
                         public void propertyChange(PropertyChangeEvent evt) {
@@ -396,6 +397,11 @@ public class DataReceiver extends JFrame {
         @Override
         public void showError(final String message) {
             JOptionPane.showMessageDialog(DataReceiver.this, message, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        @Override
+        public void appendPixel(Byte byteReceive) {
+            System.out.println(byteReceive);
         }
     }
 

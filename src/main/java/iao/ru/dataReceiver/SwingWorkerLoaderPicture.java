@@ -2,22 +2,14 @@ package iao.ru.dataReceiver;
 
 import jssc.SerialPort;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 /**
  * Created by Zoxy1 on 09.08.17.
  */
-public class SwingWorkerLoaderPicture extends SwingWorker<String, Integer> {
+public class SwingWorkerLoaderPicture extends SwingWorker<String, Byte> {
 
     private File file;
     /**
@@ -25,8 +17,7 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, Integer> {
      */
     private UICallback ui;
     private SerialPort serialPortOpen;
-    private ImagePanel imagePanel;
-    private final BufferedImage bufferedImage;
+    private GraphicsPanel graphicsPanel;
 
     /**
      * Creates data loader.
@@ -34,9 +25,8 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, Integer> {
      * @param ui UI callback to use when publishing data and manipulating UI
      *           //@param reader data source
      */
-    public SwingWorkerLoaderPicture(UICallback ui, File file, SerialPort serialPortOpen, ImagePanel imagePanel, BufferedImage bufferedImage) {
-        this.bufferedImage = bufferedImage;
-        this.imagePanel = imagePanel;
+    public SwingWorkerLoaderPicture(UICallback ui, File file, SerialPort serialPortOpen, GraphicsPanel graphicsPanel) {
+        this.graphicsPanel = graphicsPanel;
         this.file = file;
         this.serialPortOpen = serialPortOpen;
         this.ui = ui;
@@ -52,9 +42,15 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, Integer> {
      */
     @Override
     protected String doInBackground() throws Exception {
-        BufferedImage scaleImage = new BufferedImage(imagePanel.getWidthRealViewImg(), imagePanel.getHeightRealViewImg(), BufferedImage.TYPE_BYTE_GRAY);
+        Byte[] byteMass = {1,2,3,4,5};
+        publish(byteMass);
+        /*BufferedImage scaleImage = new BufferedImage(graphicsPanel.getWidthRealViewImg(), graphicsPanel.getHeightRealViewImg(), BufferedImage.TYPE_BYTE_GRAY);
         Graphics2D graphics = scaleImage.createGraphics();
-        graphics.drawImage(bufferedImage, 0, 0, imagePanel.getWidthRealViewImg(), imagePanel.getHeightRealViewImg(), null);
+        Graphics gr =scaleImage.getGraphics();*/
+        //gr.fillOval(100, 100, 1000, 700);
+
+
+        /*graphics.drawImage(bufferedImage, 0, 0, imagePanel.getWidthRealViewImg(), imagePanel.getHeightRealViewImg(), null);
         graphics.dispose();
         int height = scaleImage.getHeight();
         int width = scaleImage.getWidth();
@@ -92,8 +88,8 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, Integer> {
             }
             System.out.println(" ");
         }
-
-        Date currentData = new Date();
+*/
+        /*Date currentData = new Date();
         SimpleDateFormat format1 = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
         System.out.println(format1.format(currentData));
         try {
@@ -102,7 +98,7 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, Integer> {
             ImageIO.write(scaleImage, "bmp", fileWrite);
         } catch (IOException e1) {
             e1.printStackTrace();
-        }
+        }*/
         return "";
     }
 
@@ -113,10 +109,10 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, Integer> {
      *               {@link SwingWorker#publish(Object[])}
      */
     @Override
-    protected void process(List<Integer> chunks) {
-        /*for (Integer line : chunks) {
-            ui.appendText(line + "\n");
-        }*/
+    protected void process(List<Byte> chunks) {
+        for (Byte byteReceive : chunks) {
+            ui.appendPixel(byteReceive);
+        }
 
         ui.setProgress(getProgress());
     }
