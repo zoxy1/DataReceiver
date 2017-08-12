@@ -1,15 +1,20 @@
 package iao.ru.dataReceiver;
 
 import jssc.SerialPort;
+import jssc.SerialPortEvent;
+import jssc.SerialPortEventListener;
+import jssc.SerialPortException;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
-
+import java.util.Random;
 /**
  * Created by Zoxy1 on 09.08.17.
  */
-public class SwingWorkerLoaderPicture extends SwingWorker<String, Byte> {
+public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage> {
 
     private File file;
     /**
@@ -17,16 +22,16 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, Byte> {
      */
     private UICallback ui;
     private SerialPort serialPortOpen;
-    private GraphicsPanel graphicsPanel;
-
+    private ImagePanel imagePanel;
+    private static final Random random = new Random();
     /**
      * Creates data loader.
      *
      * @param ui UI callback to use when publishing data and manipulating UI
      *           //@param reader data source
      */
-    public SwingWorkerLoaderPicture(UICallback ui, File file, SerialPort serialPortOpen, GraphicsPanel graphicsPanel) {
-        this.graphicsPanel = graphicsPanel;
+    public SwingWorkerLoaderPicture(UICallback ui, File file, SerialPort serialPortOpen, ImagePanel imagePanel) {
+        this.imagePanel = imagePanel;
         this.file = file;
         this.serialPortOpen = serialPortOpen;
         this.ui = ui;
@@ -42,8 +47,37 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, Byte> {
      */
     @Override
     protected String doInBackground() throws Exception {
-        Byte[] byteMass = {1,2,3,4,5};
-        publish(byteMass);
+        Byte[] byteMass = {1, 2, 3, 4, 5};
+
+        int type = BufferedImage.TYPE_BYTE_GRAY;
+        int w = 100;
+        int h = 100;
+        BufferedImage bufferedImage = new BufferedImage(w, h, type);
+
+        while (true) {
+            while (serialPortOpen.getInputBufferBytesCount() == 0) {
+            }
+            while(serialPortOpen.getInputBufferBytesCount()>0){
+
+                System.out.println(serialPortOpen.readBytes(1)+" ");
+            }
+
+        }
+
+
+        /*for(int j=0;j<255;j++) {
+                //int color = j; // RGBA value, each component in a byte
+                Color color = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
+
+                for (int x = 0; x < w; x++) {
+                    for (int y = 0; y < h; y++) {
+                        bufferedImage.setRGB(x, y, color.getRGB());
+                    }
+                }
+            publish(bufferedImage);
+        Thread.sleep(100);
+            setProgress((int) ((j * 100) / 255));
+        }*/
         /*BufferedImage scaleImage = new BufferedImage(graphicsPanel.getWidthRealViewImg(), graphicsPanel.getHeightRealViewImg(), BufferedImage.TYPE_BYTE_GRAY);
         Graphics2D graphics = scaleImage.createGraphics();
         Graphics gr =scaleImage.getGraphics();*/
@@ -99,7 +133,7 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, Byte> {
         } catch (IOException e1) {
             e1.printStackTrace();
         }*/
-        return "";
+        //return "";
     }
 
     /**
@@ -109,9 +143,9 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, Byte> {
      *               {@link SwingWorker#publish(Object[])}
      */
     @Override
-    protected void process(List<Byte> chunks) {
-        for (Byte byteReceive : chunks) {
-            ui.appendPixel(byteReceive);
+    protected void process(List<BufferedImage> chunks) {
+        for (BufferedImage bufferedImage : chunks) {
+            ui.appendPixel(bufferedImage);
         }
 
         ui.setProgress(getProgress());
@@ -132,4 +166,5 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, Byte> {
         ui.stopLoading();
         ui.setText("File transmitted");
     }
+
 }

@@ -1,5 +1,7 @@
 package iao.ru.dataReceiver;
 
+import java.awt.image.BufferedImage;
+
 /**
  * Callback class to use from {@link Loader} to publish data, perform UI changes etc. Thread safety
  * should be taken into account when implementing this interface
@@ -41,6 +43,6 @@ public interface UICallback {
     //@RequiresEDT(RequiresEDTPolicy.SYNC)
     void showError(String message);
 
-    void appendPixel(Byte byteReceive);
+    void appendPixel(BufferedImage bufferedImage);
 
 }

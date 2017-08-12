@@ -43,6 +43,7 @@ public class DataReceiver extends JFrame {
     private BufferedImage bufferedImage;
     private GraphicsPanel graphicsPanel = new GraphicsPanel();
 
+
     void init() {
         JFrame.setDefaultLookAndFeelDecorated(true);
         SwingUtilities.invokeLater(new Runnable() {
@@ -157,7 +158,7 @@ public class DataReceiver extends JFrame {
                 filePathPanel.setLayout(new GridBagLayout());
                 frame.add(filePathPanel, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(1, 1, 1, 1), 0, 0));
 
-                graphicsPanel.setBorder(BorderFactory.createCompoundBorder(
+                imagePanel.setBorder(BorderFactory.createCompoundBorder(
                         BorderFactory.createLineBorder(Color.gray, 2),
                         BorderFactory.createEmptyBorder(1, 1, 1, 1)));
 
@@ -174,10 +175,11 @@ public class DataReceiver extends JFrame {
                 gridBagConstraints.insets = new Insets(1, 1, 1, 1); // отступы от компонета (top, left, down, right)
                 gridBagConstraints.ipadx = 0; // говорят о том на сколько будут увеличены минимальные размеры компонента
                 gridBagConstraints.ipady = 0;
-                /*imagePanel.setAutoscrolls(true);
-                imagePanel.setMinimumSize(new Dimension(163, 100));
-                imagePanel.setPreferredSize(new Dimension(490, 300));*/
-                frame.add(graphicsPanel, gridBagConstraints);
+                //imagePanel.setAutoscrolls(true);
+                //imagePanel.setMinimumSize(new Dimension(163, 100));
+                //imagePanel.setPreferredSize(new Dimension(490, 300));
+
+                frame.add(imagePanel, gridBagConstraints);
 
                 startReceivePictureButton.setLayout(new GridBagLayout());
                 frame.add(startReceivePictureButton, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.LAST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 0, 0));
@@ -314,15 +316,15 @@ public class DataReceiver extends JFrame {
 
                 if (serialPortOpen.isOpened()) {
                     UICallback ui = new UICallbackImpl();
-                    loaderPicture = new SwingWorkerLoaderPicture(ui, filePicture, serialPortOpen, graphicsPanel);
+                    loaderPicture = new SwingWorkerLoaderPicture(ui, filePicture, serialPortOpen, imagePanel);
                     loaderPicture.execute();
-                    loaderPicture.addPropertyChangeListener(new PropertyChangeListener() {
+                    /*loaderPicture.addPropertyChangeListener(new PropertyChangeListener() {
                         public void propertyChange(PropertyChangeEvent evt) {
                             if ("progress".equals(evt.getPropertyName())) {
                                 progressBar.setValue((Integer) evt.getNewValue());
                             }
                         }
-                    });
+                    });*/
                 } else {
                     lineTextExeption.setText("Don`t send " + serialPortOpen.getPortName() + " is closed");
                 }
@@ -400,8 +402,11 @@ public class DataReceiver extends JFrame {
         }
 
         @Override
-        public void appendPixel(Byte byteReceive) {
-            System.out.println(byteReceive);
+        public void appendPixel(BufferedImage bufferedImage) {
+
+            imagePanel.setImage(bufferedImage);
+            imagePanel.updateUI();
+            System.out.println("text test");
         }
     }
 
