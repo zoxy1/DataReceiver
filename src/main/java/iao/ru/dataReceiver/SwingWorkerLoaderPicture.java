@@ -9,8 +9,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
+
 /**
  * Created by Zoxy1 on 09.08.17.
  */
@@ -53,15 +56,36 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
         int w = 100;
         int h = 100;
         BufferedImage bufferedImage = new BufferedImage(w, h, type);
-
+        StringBuffer stringBuffer = new StringBuffer();
+        //String receiveData = new String(stringBuffer);
+        ArrayList<Byte> receiveData = new ArrayList<Byte>();
         while (true) {
             while (serialPortOpen.getInputBufferBytesCount() == 0) {
             }
-            while(serialPortOpen.getInputBufferBytesCount()>0){
+            while (serialPortOpen.getInputBufferBytesCount() > 0) {
+                Byte byteRead = serialPortOpen.readBytes(1)[0];
+                receiveData.add(byteRead);
+                /*for (int i = 0; i < byteMassRead.length; i++) {
+                    receiveData.add(byteMassRead[i]);
+                }*/
 
-                System.out.println(serialPortOpen.readBytes(1)+" ");
+                /* ArrayList<Byte> arrayList = Arrays.asList(byteMassRead);
+                receiveData.addAll()
+                Collections.addAll(byteMassRead, receiveData);*/
+                //String receiveData = new String(byteMassRead);
+                //stringBuffer.append(receiveData);
+
+                //System.out.println(stringBuffer.toString());
+                //int indexSubstring = stringBuffer.indexOf("line ");
+                //System.out.println(indexSubstring);
+
             }
+            Charset cset = Charset.forName("UTF-8");
+            for(Byte receive:receiveData ) {
 
+                ByteBuffer byteBuffer = cset.encode(String.valueOf(receive));
+                System.out.print(byteBuffer.array() + " ");
+            }
         }
 
 

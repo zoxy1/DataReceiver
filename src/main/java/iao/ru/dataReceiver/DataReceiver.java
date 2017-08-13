@@ -21,7 +21,6 @@ import java.util.ArrayList;
  * Created by Zoxy1 on 20.07.17.
  */
 public class DataReceiver extends JFrame {
-    private static final long serialVersion = 2347162171234712347L;
     private JLabel pathText = new JLabel();
     static String comPortName;
     private JButton startReceivePictureButton = new JButton("Start receive picture");
@@ -33,7 +32,7 @@ public class DataReceiver extends JFrame {
     private ArrayList<JRadioButtonMenuItem> jRadioButtonSpeedMenuItems = new ArrayList<JRadioButtonMenuItem>();
     private JLabel pictureLabel = new JLabel("");
     private ImagePanel imagePanel = new ImagePanel();
-    private JFrame frame = new JFrame("Data Transfer");
+    private JFrame frame = new JFrame("Data Receiver");
     private JProgressBar progressBar = new JProgressBar();
     private JPanel progressBarPanel = new JPanel();
     private SwingWorkerLoaderText loaderText = null;
