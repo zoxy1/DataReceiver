@@ -9,6 +9,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -58,13 +61,13 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
         BufferedImage bufferedImage = new BufferedImage(w, h, type);
         StringBuffer stringBuffer = new StringBuffer();
         //String receiveData = new String(stringBuffer);
-        ArrayList<Byte> receiveData = new ArrayList<Byte>();
+        ArrayList<Integer> receiveData = new ArrayList<Integer>();
         while (true) {
             while (serialPortOpen.getInputBufferBytesCount() == 0) {
             }
             while (serialPortOpen.getInputBufferBytesCount() > 0) {
-                Byte byteRead = serialPortOpen.readBytes(1)[0];
-                receiveData.add(byteRead);
+                byte byteRead = serialPortOpen.readBytes(1)[0];
+                receiveData.add((int)byteRead);
                 /*for (int i = 0; i < byteMassRead.length; i++) {
                     receiveData.add(byteMassRead[i]);
                 }*/
@@ -81,10 +84,13 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
 
             }
             Charset cset = Charset.forName("UTF-8");
-            for(Byte receive:receiveData ) {
+            Byte[] bytes  = receiveData.toArray(new Byte[receiveData.size()]);
 
-                ByteBuffer byteBuffer = cset.encode(String.valueOf(receive));
-                System.out.print(byteBuffer.array() + " ");
+            for(Integer receive:receiveData ) {
+
+
+                // ByteBuffer byteBuffer = cset.encode(String.valueOf(receive));
+                System.out.println(receive);
             }
         }
 
