@@ -23,15 +23,12 @@ import java.util.List;
  * Created by Zoxy1 on 09.08.17.
  */
 public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage> {
-
-    private File file;
     /**
      * UI callback
      */
     private UICallback ui;
     private SerialPort serialPortOpen;
-    private ImagePanel imagePanel;
-    private static final Random random = new Random();
+    private boolean exitTread;
 
     /**
      * Creates data loader.
@@ -39,12 +36,11 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
      * @param ui UI callback to use when publishing data and manipulating UI
      *           //@param reader data source
      */
-    public SwingWorkerLoaderPicture(UICallback ui, File file, SerialPort serialPortOpen, ImagePanel imagePanel) {
-        this.imagePanel = imagePanel;
-        this.file = file;
+    public SwingWorkerLoaderPicture(UICallback ui, SerialPort serialPortOpen, boolean exitTread) {
         this.serialPortOpen = serialPortOpen;
         this.ui = ui;
         this.ui.startLoading();
+        this.exitTread = exitTread;
     }
 
     /**
@@ -68,6 +64,9 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
         ArrayList<Integer> positionLine = new ArrayList<Integer>();
         int numberLine = 0;
         while (true) {
+            if(exitTread){
+                break;
+            }
             while (serialPortOpen.getInputBufferBytesCount() == 0) {
             }
             while (serialPortOpen.getInputBufferBytesCount() > 0) {
@@ -102,84 +101,7 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
             }
 
         }
-        /*for (int countLine1 =0; countLine1 < (positionLine.size())-1; countLine1++) {
-            for (int k = positionLine.get(countLine1); k < (positionLine.get(countLine1+1) - positionLine.get(countLine1)); k++) {
-                System.out.print(receiveData.get(k) + " ");
-            }
-            System.out.println("");
-        }*/
-
-        /*for(int j=0;j<255;j++) {
-                //int color = j; // RGBA value, each component in a byte
-                Color color = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
-
-                for (int x = 0; x < w; x++) {
-                    for (int y = 0; y < h; y++) {
-                        bufferedImage.setRGB(x, y, color.getRGB());
-                    }
-                }
-            publish(bufferedImage);
-        Thread.sleep(100);
-            setProgress((int) ((j * 100) / 255));
-        }*/
-        /*BufferedImage scaleImage = new BufferedImage(graphicsPanel.getWidthRealViewImg(), graphicsPanel.getHeightRealViewImg(), BufferedImage.TYPE_BYTE_GRAY);
-        Graphics2D graphics = scaleImage.createGraphics();
-        Graphics gr =scaleImage.getGraphics();*/
-        //gr.fillOval(100, 100, 1000, 700);
-
-
-        /*graphics.drawImage(bufferedImage, 0, 0, imagePanel.getWidthRealViewImg(), imagePanel.getHeightRealViewImg(), null);
-        graphics.dispose();
-        int height = scaleImage.getHeight();
-        int width = scaleImage.getWidth();
-        int sleep = 100;
-        long countByte32 = 0;
-        long countByte = 0;
-        long sizePicture = height * width;
-        for (int i = 0; i < height; i++) {
-            System.out.print("line ");
-            Charset cset = Charset.forName("Windows-1251");
-            ByteBuffer byteBuffer = cset.encode("line ");
-            byte[] bytes = byteBuffer.array();
-            for (int k = 0; k < bytes.length; k++) {
-                serialPortOpen.writeByte(bytes[k]);
-                if (countByte32 > 31) {
-                    countByte32 = 0;
-                    Thread.sleep(sleep);
-                }
-                countByte32++;
-            }
-
-            for (int j = 0; j < width; j++) {
-                int rgba = scaleImage.getRGB(j, i);
-                Color color = new Color(rgba, true);
-                int r = color.getRed();
-                System.out.print(r + " ");
-                if (countByte32 > 31) {
-                    countByte32 = 0;
-                    Thread.sleep(sleep);
-                }
-                serialPortOpen.writeByte((byte) r);
-                countByte32++;
-                setProgress((int) ((countByte * 100) / sizePicture));
-                countByte++;
-            }
-            System.out.println(" ");
-        }
-*/
-
-       /* Date currentDate =new Date();
-        SimpleDateFormat format1 = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
-
-        System.out.println(format1.format(currentDate));
-        try {
-            File fileWrite = new File("Pictures is received\\picture_" + format1.format(currentDate) + ".bmp");
-            fileWrite.mkdirs();
-            ImageIO.write(bufferedImage, "bmp", fileWrite);
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-    return "";*/
+        return "";
     }
 
     /**
@@ -201,6 +123,7 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
      * Cancels execution
      */
     public void cancel() {
+
         cancel(true);
     }
 
@@ -212,5 +135,11 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
         ui.stopLoading();
         ui.setText("File transmitted");
     }
+    public boolean isExitTread() {
+        return exitTread;
+    }
 
+    public void setExitTread(boolean exitTread) {
+        this.exitTread = exitTread;
+    }
 }

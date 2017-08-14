@@ -41,11 +41,9 @@ public class DataReceiver extends JFrame {
     private JPanel progressBarPanel = new JPanel();
     private SwingWorkerLoaderText loaderText = null;
     private SwingWorkerLoaderPicture loaderPicture = null;
-    private JButton cancel = new JButton("Cancel");
-    private File filePicture;
+    private JButton cancel = new JButton("Stop");
     public BufferedImage bufferedImage;
-    private GraphicsPanel graphicsPanel = new GraphicsPanel();
-
+    private boolean exitTread = false;
 
     void init() {
         JFrame.setDefaultLookAndFeelDecorated(true);
@@ -217,21 +215,28 @@ public class DataReceiver extends JFrame {
                         if(loaderText != null) {
                             loaderText.cancel();
                         }
+
                         if(loaderPicture != null) {
-                            loaderPicture.cancel();
+                            //loaderPicture.cancel();
+                            loaderPicture.setExitTread(true);
+                            startReceivePictureButton.setText("Start receive picture");
+                            progressBar.setIndeterminate(false);
+                            progressBarPanel.setVisible(false);
+
                         }
                     }
                 });
 
                 progressBar.setMinimum(0);
                 progressBar.setMaximum(100);
-                progressBar.setStringPainted(true);
+                //progressBar.setStringPainted(true);
                 progressBar.setLayout(new GridBagLayout());
                 //progressBar.setMinimumSize(new Dimension(100, 20));
                 progressBar.setPreferredSize(new Dimension(360, 20));
                 progressBar.setForeground(new Color(0,191,32));
                 progressBarPanel.add(progressBar);
                 progressBarPanel.setVisible(false);
+                progressBar.setIndeterminate(false);
                 frame.add(progressBarPanel, new GridBagConstraints(1, 5, 1, 1, 0.9, 0.0, GridBagConstraints.CENTER, GridBagConstraints.CENTER, new Insets(1, 1, 1, 1), 0, 0));
 
                 frame.add(lineTextExeption, new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0, GridBagConstraints.LAST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 0, 0));
@@ -322,8 +327,9 @@ public class DataReceiver extends JFrame {
         public void actionPerformed(ActionEvent e) {
 
                 if (serialPortOpen.isOpened()) {
+                    exitTread = false;
                     UICallback ui = new UICallbackImpl();
-                    loaderPicture = new SwingWorkerLoaderPicture(ui, filePicture, serialPortOpen, imagePanel);
+                    loaderPicture = new SwingWorkerLoaderPicture(ui, serialPortOpen, exitTread);
                     loaderPicture.execute();
                     /*loaderPicture.addPropertyChangeListener(new PropertyChangeListener() {
                         public void propertyChange(PropertyChangeEvent evt) {
@@ -388,6 +394,7 @@ public class DataReceiver extends JFrame {
             imagePanel.updateUI();
             startReceivePictureButton.setText("Wait receive the picture...");
             progressBar.setValue(0);
+            progressBar.setIndeterminate(true);
             progressBarPanel.setVisible(true);
             lineTextExeption.setText("Start receive the picture");
         }
@@ -397,9 +404,11 @@ public class DataReceiver extends JFrame {
          */
         @Override
         public void stopLoading() {
+            progressBar.setIndeterminate(false);
             progressBarPanel.setVisible(false);
             loaderText = null;
             startReceivePictureButton.setText("Start receive picture");
+            exitTread =  false;
         }
 
         /**
