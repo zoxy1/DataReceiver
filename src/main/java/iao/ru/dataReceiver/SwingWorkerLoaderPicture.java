@@ -59,7 +59,7 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
         BufferedImage bufferedImage;
         int numberLine = 0;
         while (true) {
-            if(exitTread){
+            if (exitTread) {
                 break;
             }
             while (serialPortOpen.getInputBufferBytesCount() == 0) {
@@ -81,14 +81,15 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
                                     for (int pixelValue = ((positionLine.get(currentIndexLine - 1)) + numberKeyLetters + 1); pixelValue < position; pixelValue++) {
                                         System.out.print(receiveData.get(pixelValue) + " ");
                                         Color color = new Color(receiveData.get(pixelValue), receiveData.get(pixelValue), receiveData.get(pixelValue));
-                                        if (column < bufferedImage.getWidth() &&  numberLine < bufferedImage.getHeight()) {
+                                        if (column < bufferedImage.getWidth() && numberLine < bufferedImage.getHeight()) {
                                             bufferedImage.setRGB(column, numberLine, color.getRGB());
                                         }
                                         column++;
                                     }
                                     System.out.println(" ");
-                                    numberLine++;
                                     publish(bufferedImage);
+                                    setProgress(numberLine);
+                                    numberLine++;
                                 }
                             }
                         }
@@ -130,8 +131,8 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
     @Override
     protected void done() {
         ui.stopLoading();
-        ui.setText("File transmitted");
     }
+
     public boolean isExitTread() {
         return exitTread;
     }

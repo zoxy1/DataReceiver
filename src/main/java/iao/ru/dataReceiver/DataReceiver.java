@@ -19,6 +19,7 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.CancellationException;
 
 /**
  * Created by Zoxy1 on 20.07.17.
@@ -58,14 +59,6 @@ public class DataReceiver extends JFrame {
                 JMenuBar menuBar = new JMenuBar();
                 JMenu fileMenu = new JMenu("File");
                 fileMenu.setFont(font);
-                /* JMenuItem openPictureMenuItem = new JMenuItem("Open file picture");
-                openPictureMenuItem.addActionListener(new OpenPictureActionListener());
-                openPictureMenuItem.setFont(font);
-
-                JMenuItem openTextMenuItem = new JMenuItem("Open file text");
-                openTextMenuItem.addActionListener(new OpenTextActionListener());
-                openTextMenuItem.setFont(font);*/
-
                 JMenuItem exitMenuItem = new JMenuItem("Exit");
                 exitMenuItem.setFont(font);
                 exitMenuItem.addActionListener(new ActionListener() {
@@ -75,8 +68,6 @@ public class DataReceiver extends JFrame {
 
                 });
 
-                //fileMenu.add(openPictureMenuItem);
-                //fileMenu.add(openTextMenuItem);
                 fileMenu.addSeparator();
                 fileMenu.add(exitMenuItem);
                 menuBar.add(fileMenu);
@@ -176,10 +167,6 @@ public class DataReceiver extends JFrame {
                 gridBagConstraints.insets = new Insets(1, 1, 1, 1); // отступы от компонета (top, left, down, right)
                 gridBagConstraints.ipadx = 0; // говорят о том на сколько будут увеличены минимальные размеры компонента
                 gridBagConstraints.ipady = 0;
-                //imagePanel.setAutoscrolls(true);
-                //imagePanel.setMinimumSize(new Dimension(163, 100));
-                //imagePanel.setPreferredSize(new Dimension(490, 300));
-
                 frame.add(imagePanel, gridBagConstraints);
 
                 startReceivePictureButton.setLayout(new GridBagLayout());
@@ -209,22 +196,7 @@ public class DataReceiver extends JFrame {
                         BorderFactory.createEmptyBorder(1, 1, 1, 1)));
 
                 frame.add(cancel, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.LAST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 0, 0));
-                cancel.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if(loaderText != null) {
-                            loaderText.cancel();
-                        }
-
-                        if(loaderPicture != null) {
-                            //loaderPicture.cancel();
-                            loaderPicture.setExitTread(true);
-                            startReceivePictureButton.setText("Start receive picture");
-                            progressBarPanel.setVisible(false);
-
-                        }
-                    }
-                });
+                cancel.addActionListener(new CancelActionListener());
 
                 progressBar.setMinimum(0);
                 progressBar.setMaximum(100);
@@ -237,28 +209,12 @@ public class DataReceiver extends JFrame {
                 frame.add(progressBarPanel, new GridBagConstraints(1, 5, 1, 1, 0.9, 0.0, GridBagConstraints.CENTER, GridBagConstraints.CENTER, new Insets(1, 1, 1, 1), 0, 0));
 
                 frame.add(lineTextExeption, new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0, GridBagConstraints.LAST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 0, 0));
-                Font fontdevelopedBy = new Font("Verdana", Font.PLAIN, 8);
-                developedBy.setFont(fontdevelopedBy);
+                Font fontDevelopedBy = new Font("Verdana", Font.PLAIN, 8);
+                developedBy.setFont(fontDevelopedBy);
                 frame.add(developedBy, new GridBagConstraints(0, 7, 2, 1, 0.0, 0.0, GridBagConstraints.FIRST_LINE_END, GridBagConstraints.LINE_END, new Insets(1, 1, 1, 1), 0, 0));
                 frame.pack();
                 frame.setLocationRelativeTo(null);
                 frame.setVisible(true);
-
-    /*private static class PortReader implements SerialPortEventListener {
-
-        public void serialEvent(SerialPortEvent event) {
-            if (event.isRXCHAR() && event.getEventValue() > 0) {
-                try {
-                    //Получаем ответ от устройства, обрабатываем данные и т.д.
-                    String data = serialPort.readString(event.getEventValue());
-                    System.out.println(data);
-                    //И снова отправляем запрос
-                    serialPort.writeString("Get data");
-                } catch (SerialPortException ex) {
-                    System.out.println(ex);
-                }
-            }
-        }*/
             }
         });
     }
@@ -329,13 +285,6 @@ public class DataReceiver extends JFrame {
                     UICallback ui = new UICallbackImpl();
                     loaderPicture = new SwingWorkerLoaderPicture(ui, serialPortOpen, exitTread);
                     loaderPicture.execute();
-                    /*loaderPicture.addPropertyChangeListener(new PropertyChangeListener() {
-                        public void propertyChange(PropertyChangeEvent evt) {
-                            if ("progress".equals(evt.getPropertyName())) {
-                                progressBar.setValue((Integer) evt.getNewValue());
-                            }
-                        }
-                    });*/
                 } else {
                     lineTextExeption.setText("Don`t send " + serialPortOpen.getPortName() + " is closed");
                 }
@@ -362,72 +311,6 @@ public class DataReceiver extends JFrame {
         }
     }
 
-    /**
-     * UI callback implementation
-     */
-    public class UICallbackImpl implements UICallback {
-
-        @Override
-        public void setText(final String text) {
-            lineTextExeption.setText(text);
-        }
-
-        /**
-         * Sets loading progress
-         *
-         * @param progressPercent progress value to set
-         */
-
-        @Override
-        public void setProgress(final int progressPercent) {
-            progressBar.setValue(progressPercent);
-        }
-
-        /**
-         * Performs visual operations on loading start - clears the text and shows popup with the progress bar .
-         */
-        @Override
-        public void startLoading() {
-            imagePanel.setImage(null);
-            imagePanel.updateUI();
-            startReceivePictureButton.setText("Wait receive the picture...");
-            progressBar.setValue(0);
-            progressBarPanel.setVisible(true);
-            lineTextExeption.setText("Start receive the picture");
-        }
-
-        /**
-         * Performs visual operations on loading stop - hides progress bar
-         */
-        @Override
-        public void stopLoading() {
-            progressBarPanel.setVisible(false);
-            loaderText = null;
-            startReceivePictureButton.setText("Start receive picture");
-            exitTread =  false;
-        }
-
-        /**
-         * Shows error message to user
-         *
-         * @param message message to display
-         */
-        @Override
-        public void showError(final String message) {
-            JOptionPane.showMessageDialog(DataReceiver.this, message, "Error", JOptionPane.ERROR_MESSAGE);
-        }
-
-        @Override
-        public void appendPixel(BufferedImage bufferedImageReceive) {
-
-            imagePanel.setImage(bufferedImageReceive);
-            imagePanel.updateUI();
-            bufferedImage = bufferedImageReceive;
-
-            //System.out.println("text test");
-        }
-    }
-
     public class SavePictureButtonActionListener implements ActionListener {
 
         @Override
@@ -449,6 +332,76 @@ public class DataReceiver extends JFrame {
         }
 
     }
+
+    public class CancelActionListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (loaderText != null) {
+                loaderText.cancel();
+            }
+
+            if (loaderPicture != null) {
+                loaderPicture.setExitTread(true);
+                progressBarPanel.setVisible(false);
+
+            }
+        }
+    }
+    /**
+     * UI callback implementation
+     */
+    public class UICallbackImpl implements UICallback {
+
+        @Override
+        public void setText(final String text) {
+            lineTextExeption.setText(text);
+        }
+
+        @Override
+        public void setProgress(final int line) {
+            lineTextExeption.setText("Line:" + line);
+        }
+
+        /**
+         * Performs visual operations on loading start - clears the text and shows popup with the progress bar .
+         */
+        @Override
+        public void startLoading() {
+            imagePanel.setImage(null);
+            imagePanel.updateUI();
+            progressBar.setValue(0);
+            progressBarPanel.setVisible(true);
+            lineTextExeption.setText("Wait receive the picture");
+        }
+
+        /**
+         * Performs visual operations on loading stop - hides progress bar
+         */
+        @Override
+        public void stopLoading() {
+            progressBarPanel.setVisible(false);
+            loaderText = null;
+            exitTread =  false;
+        }
+
+        /**
+         * Shows error message to user
+         *
+         * @param message message to display
+         */
+        @Override
+        public void showError(final String message) {
+            JOptionPane.showMessageDialog(DataReceiver.this, message, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        @Override
+        public void appendPixel(BufferedImage bufferedImageReceive) {
+            imagePanel.setImage(bufferedImageReceive);
+            imagePanel.updateUI();
+            bufferedImage = bufferedImageReceive;
+        }
+    }
+
 }
 
 
