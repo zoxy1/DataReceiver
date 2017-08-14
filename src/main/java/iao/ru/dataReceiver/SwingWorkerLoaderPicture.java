@@ -52,16 +52,11 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
      */
     @Override
     protected String doInBackground() throws Exception {
-
+        BufferedImageSingleton.setBufferedImage(null);
         int type = BufferedImage.TYPE_BYTE_GRAY;
-        int w = 100;
-        int h = 100;
-        BufferedImage bufferedImage = new BufferedImage(w, h, type);
-        //BufferedImage bufferedImage = new BufferedImage(position-((positionLine.get(currentIndexLine - 1))+4), numberLine+1, type);
-        //StringBuffer stringBuffer = new StringBuffer();
-        //String receiveData = new String(stringBuffer);
         ArrayList<Integer> receiveData = new ArrayList<Integer>();
         ArrayList<Integer> positionLine = new ArrayList<Integer>();
+        BufferedImage bufferedImage;
         int numberLine = 0;
         while (true) {
             if(exitTread){
@@ -79,14 +74,16 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
                             if (!(positionLine.contains(position))) {
                                 positionLine.add(position);
                                 if (positionLine.size() >= 2) {
-
                                     int currentIndexLine = positionLine.size() - 1;
+                                    int width = position - ((positionLine.get(currentIndexLine - 1)) + numberKeyLetters + 1);
+                                    bufferedImage = BufferedImageSingleton.getInstanse(width, width, type);
                                     int column = 0;
                                     for (int pixelValue = ((positionLine.get(currentIndexLine - 1)) + numberKeyLetters + 1); pixelValue < position; pixelValue++) {
                                         System.out.print(receiveData.get(pixelValue) + " ");
                                         Color color = new Color(receiveData.get(pixelValue), receiveData.get(pixelValue), receiveData.get(pixelValue));
-
-                                        bufferedImage.setRGB(column, numberLine, color.getRGB());
+                                        if (column < bufferedImage.getWidth() &&  numberLine < bufferedImage.getHeight()) {
+                                            bufferedImage.setRGB(column, numberLine, color.getRGB());
+                                        }
                                         column++;
                                     }
                                     System.out.println(" ");

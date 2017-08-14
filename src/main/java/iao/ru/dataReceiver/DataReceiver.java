@@ -162,7 +162,7 @@ public class DataReceiver extends JFrame {
                 imagePanel.setBorder(BorderFactory.createCompoundBorder(
                         BorderFactory.createLineBorder(Color.gray, 2),
                         BorderFactory.createEmptyBorder(1, 1, 1, 1)));
-
+                imagePanel.setAutoscrolls(true);
 
                 GridBagConstraints gridBagConstraints = new GridBagConstraints();
                 gridBagConstraints.gridx = 0; // расположение элемента по х
@@ -220,7 +220,6 @@ public class DataReceiver extends JFrame {
                             //loaderPicture.cancel();
                             loaderPicture.setExitTread(true);
                             startReceivePictureButton.setText("Start receive picture");
-                            progressBar.setIndeterminate(false);
                             progressBarPanel.setVisible(false);
 
                         }
@@ -229,14 +228,12 @@ public class DataReceiver extends JFrame {
 
                 progressBar.setMinimum(0);
                 progressBar.setMaximum(100);
-                //progressBar.setStringPainted(true);
                 progressBar.setLayout(new GridBagLayout());
-                //progressBar.setMinimumSize(new Dimension(100, 20));
                 progressBar.setPreferredSize(new Dimension(360, 20));
                 progressBar.setForeground(new Color(0,191,32));
                 progressBarPanel.add(progressBar);
                 progressBarPanel.setVisible(false);
-                progressBar.setIndeterminate(false);
+                progressBar.setIndeterminate(true);
                 frame.add(progressBarPanel, new GridBagConstraints(1, 5, 1, 1, 0.9, 0.0, GridBagConstraints.CENTER, GridBagConstraints.CENTER, new Insets(1, 1, 1, 1), 0, 0));
 
                 frame.add(lineTextExeption, new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0, GridBagConstraints.LAST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 0, 0));
@@ -327,6 +324,7 @@ public class DataReceiver extends JFrame {
         public void actionPerformed(ActionEvent e) {
 
                 if (serialPortOpen.isOpened()) {
+                    progressBarPanel.setVisible(true);
                     exitTread = false;
                     UICallback ui = new UICallbackImpl();
                     loaderPicture = new SwingWorkerLoaderPicture(ui, serialPortOpen, exitTread);
@@ -394,7 +392,6 @@ public class DataReceiver extends JFrame {
             imagePanel.updateUI();
             startReceivePictureButton.setText("Wait receive the picture...");
             progressBar.setValue(0);
-            progressBar.setIndeterminate(true);
             progressBarPanel.setVisible(true);
             lineTextExeption.setText("Start receive the picture");
         }
@@ -404,7 +401,6 @@ public class DataReceiver extends JFrame {
          */
         @Override
         public void stopLoading() {
-            progressBar.setIndeterminate(false);
             progressBarPanel.setVisible(false);
             loaderText = null;
             startReceivePictureButton.setText("Start receive picture");
