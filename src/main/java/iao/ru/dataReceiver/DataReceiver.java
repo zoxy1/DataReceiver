@@ -9,13 +9,16 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by Zoxy1 on 20.07.17.
@@ -23,7 +26,8 @@ import java.util.ArrayList;
 public class DataReceiver extends JFrame {
     private JLabel pathText = new JLabel();
     static String comPortName;
-    private JButton startReceivePictureButton = new JButton("Start receive picture");
+    private JButton startReceivePictureButton = new JButton("Start receive the picture");
+    private JButton savePictureButton = new JButton("Save picture");
     private JButton startReceiveText = new JButton("Start receive text");
     private JLabel lineTextExeption = new JLabel();
     private JLabel developedBy = new JLabel("Developed by Andrey Kudryavtsev");
@@ -39,7 +43,7 @@ public class DataReceiver extends JFrame {
     private SwingWorkerLoaderPicture loaderPicture = null;
     private JButton cancel = new JButton("Cancel");
     private File filePicture;
-    private BufferedImage bufferedImage;
+    public BufferedImage bufferedImage;
     private GraphicsPanel graphicsPanel = new GraphicsPanel();
 
 
@@ -183,6 +187,10 @@ public class DataReceiver extends JFrame {
                 startReceivePictureButton.setLayout(new GridBagLayout());
                 frame.add(startReceivePictureButton, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.LAST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 0, 0));
                 startReceivePictureButton.addActionListener(new StartReceivePictureButtonActionListener());
+
+                savePictureButton.setLayout(new GridBagLayout());
+                frame.add(savePictureButton, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.LINE_START, GridBagConstraints.NONE, new Insets(1, 1, 1, 1), 0, 0));
+                savePictureButton.addActionListener(new SavePictureButtonActionListener());
 
                 lineTextExeption.setText("Select COM port");
                 lineTextExeption.setBorder(BorderFactory.createCompoundBorder(
@@ -353,7 +361,7 @@ public class DataReceiver extends JFrame {
     /**
      * UI callback implementation
      */
-    private class UICallbackImpl implements UICallback {
+    public class UICallbackImpl implements UICallback {
 
         @Override
         public void setText(final String text) {
@@ -376,9 +384,12 @@ public class DataReceiver extends JFrame {
          */
         @Override
         public void startLoading() {
-            lineTextExeption.setText("Send file...");
+            imagePanel.removeAll();
+            imagePanel.updateUI();
+            startReceivePictureButton.setText("Wait receive the picture...");
             progressBar.setValue(0);
             progressBarPanel.setVisible(true);
+            lineTextExeption.setText("Start receive the picture");
         }
 
         /**
@@ -388,6 +399,7 @@ public class DataReceiver extends JFrame {
         public void stopLoading() {
             progressBarPanel.setVisible(false);
             loaderText = null;
+            startReceivePictureButton.setText("Start receive picture");
         }
 
         /**
@@ -401,15 +413,37 @@ public class DataReceiver extends JFrame {
         }
 
         @Override
-        public void appendPixel(BufferedImage bufferedImage) {
+        public void appendPixel(BufferedImage bufferedImageReceive) {
 
-            imagePanel.setImage(bufferedImage);
+            imagePanel.setImage(bufferedImageReceive);
             imagePanel.updateUI();
-            System.out.println("text test");
+            bufferedImage = bufferedImageReceive;
+
+            //System.out.println("text test");
         }
     }
 
+    public class SavePictureButtonActionListener implements ActionListener {
 
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (bufferedImage != null) {
+                Date currentDate = new Date();
+                SimpleDateFormat format1 = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
+
+                System.out.println(format1.format(currentDate));
+                try {
+                    File fileWrite = new File("Pictures is received\\picture_" + format1.format(currentDate) + ".bmp");
+                    fileWrite.mkdirs();
+                    ImageIO.write(bufferedImage, "bmp", fileWrite);
+                    lineTextExeption.setText("File picture_" + format1.format(currentDate) + ".bmp is recorded");
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+
+    }
 }
 
 

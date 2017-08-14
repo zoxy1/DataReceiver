@@ -5,6 +5,7 @@ import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -14,6 +15,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
@@ -30,6 +32,7 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
     private SerialPort serialPortOpen;
     private ImagePanel imagePanel;
     private static final Random random = new Random();
+
     /**
      * Creates data loader.
      *
@@ -53,47 +56,58 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
      */
     @Override
     protected String doInBackground() throws Exception {
-        Byte[] byteMass = {1, 2, 3, 4, 5};
 
         int type = BufferedImage.TYPE_BYTE_GRAY;
         int w = 100;
         int h = 100;
         BufferedImage bufferedImage = new BufferedImage(w, h, type);
-        StringBuffer stringBuffer = new StringBuffer();
+        //BufferedImage bufferedImage = new BufferedImage(position-((positionLine.get(currentIndexLine - 1))+4), numberLine+1, type);
+        //StringBuffer stringBuffer = new StringBuffer();
         //String receiveData = new String(stringBuffer);
         ArrayList<Integer> receiveData = new ArrayList<Integer>();
+        ArrayList<Integer> positionLine = new ArrayList<Integer>();
+        int numberLine = 0;
         while (true) {
             while (serialPortOpen.getInputBufferBytesCount() == 0) {
             }
             while (serialPortOpen.getInputBufferBytesCount() > 0) {
-                byte byteRead = serialPortOpen.readBytes(1)[0];
-                receiveData.add((int)byteRead);
-                /*for (int i = 0; i < byteMassRead.length; i++) {
-                    receiveData.add(byteMassRead[i]);
-                }*/
+                int byteRead = (serialPortOpen.readBytes(1)[0]) & 0xFF;
+                receiveData.add(byteRead);
+                if (receiveData.size() > 3) {
+                    for (int position = 0; position < (receiveData.size() - 3); position++) {
+                        if (receiveData.get(position) == 108 && receiveData.get(position + 1) == 105 && receiveData.get(position + 2) == 110 && receiveData.get(position + 3) == 101) {
+                            if (!(positionLine.contains(position))) {
+                                positionLine.add(position);
+                                if (positionLine.size() >= 2) {
 
-                /* ArrayList<Byte> arrayList = Arrays.asList(byteMassRead);
-                receiveData.addAll()
-                Collections.addAll(byteMassRead, receiveData);*/
-                //String receiveData = new String(byteMassRead);
-                //stringBuffer.append(receiveData);
 
-                //System.out.println(stringBuffer.toString());
-                //int indexSubstring = stringBuffer.indexOf("line ");
-                //System.out.println(indexSubstring);
+                                    int currentIndexLine = positionLine.size() - 1;
+                                    int column = 0;
+                                    for (int p = ((positionLine.get(currentIndexLine - 1))+4); p < position; p++) {
+                                        System.out.print(receiveData.get(p) + " ");
+                                        Color color = new Color(receiveData.get(p), receiveData.get(p), receiveData.get(p));
+
+                                        bufferedImage.setRGB(column, numberLine, color.getRGB());
+                                        column++;
+                                    }
+                                    System.out.println(" ");
+                                    numberLine++;
+                                    publish(bufferedImage);
+                                }
+                            }
+                        }
+                    }
+                }
 
             }
-            Charset cset = Charset.forName("UTF-8");
-            Byte[] bytes  = receiveData.toArray(new Byte[receiveData.size()]);
 
-            for(Integer receive:receiveData ) {
-
-
-                // ByteBuffer byteBuffer = cset.encode(String.valueOf(receive));
-                System.out.println(receive);
+    }
+        /*for (int countLine1 =0; countLine1 < (positionLine.size())-1; countLine1++) {
+            for (int k = positionLine.get(countLine1); k < (positionLine.get(countLine1+1) - positionLine.get(countLine1)); k++) {
+                System.out.print(receiveData.get(k) + " ");
             }
-        }
-
+            System.out.println("");
+        }*/
 
         /*for(int j=0;j<255;j++) {
                 //int color = j; // RGBA value, each component in a byte
@@ -111,7 +125,7 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
         /*BufferedImage scaleImage = new BufferedImage(graphicsPanel.getWidthRealViewImg(), graphicsPanel.getHeightRealViewImg(), BufferedImage.TYPE_BYTE_GRAY);
         Graphics2D graphics = scaleImage.createGraphics();
         Graphics gr =scaleImage.getGraphics();*/
-        //gr.fillOval(100, 100, 1000, 700);
+    //gr.fillOval(100, 100, 1000, 700);
 
 
         /*graphics.drawImage(bufferedImage, 0, 0, imagePanel.getWidthRealViewImg(), imagePanel.getHeightRealViewImg(), null);
@@ -153,18 +167,20 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
             System.out.println(" ");
         }
 */
-        /*Date currentData = new Date();
+
+       /* Date currentDate =new Date();
         SimpleDateFormat format1 = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
-        System.out.println(format1.format(currentData));
+
+        System.out.println(format1.format(currentDate));
         try {
-            File fileWrite = new File("Pictures is received\\picture_" + format1.format(currentData) + ".bmp");
+            File fileWrite = new File("Pictures is received\\picture_" + format1.format(currentDate) + ".bmp");
             fileWrite.mkdirs();
-            ImageIO.write(scaleImage, "bmp", fileWrite);
+            ImageIO.write(bufferedImage, "bmp", fileWrite);
         } catch (IOException e1) {
             e1.printStackTrace();
-        }*/
-        //return "";
-    }
+        }
+    return "";*/
+}
 
     /**
      * EDT part of loader. This method is called in EDT
