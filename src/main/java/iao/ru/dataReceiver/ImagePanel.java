@@ -2,6 +2,7 @@ package iao.ru.dataReceiver;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class ImagePanel extends JPanel {
     private Image image;
@@ -75,4 +76,5 @@ public class ImagePanel extends JPanel {
     public void setHeightRealViewImg(int heightRealViewImg) {
         this.heightRealViewImg = heightRealViewImg;
     }
+
 }

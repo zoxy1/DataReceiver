@@ -384,7 +384,7 @@ public class DataReceiver extends JFrame {
          */
         @Override
         public void startLoading() {
-            imagePanel.removeAll();
+            imagePanel.setImage(null);
             imagePanel.updateUI();
             startReceivePictureButton.setText("Wait receive the picture...");
             progressBar.setValue(0);

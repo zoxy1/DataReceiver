@@ -73,19 +73,19 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
             while (serialPortOpen.getInputBufferBytesCount() > 0) {
                 int byteRead = (serialPortOpen.readBytes(1)[0]) & 0xFF;
                 receiveData.add(byteRead);
-                if (receiveData.size() > 3) {
-                    for (int position = 0; position < (receiveData.size() - 3); position++) {
-                        if (receiveData.get(position) == 108 && receiveData.get(position + 1) == 105 && receiveData.get(position + 2) == 110 && receiveData.get(position + 3) == 101) {
+                int numberKeyLetters = 4;
+                if (receiveData.size() > numberKeyLetters) {
+                    for (int position = 0; position < (receiveData.size() - numberKeyLetters); position++) {
+                        if (receiveData.get(position) == 108 && receiveData.get(position + 1) == 105 && receiveData.get(position + 2) == 110 && receiveData.get(position + 3) == 101 && receiveData.get(position + numberKeyLetters) == 32) {
                             if (!(positionLine.contains(position))) {
                                 positionLine.add(position);
                                 if (positionLine.size() >= 2) {
 
-
                                     int currentIndexLine = positionLine.size() - 1;
                                     int column = 0;
-                                    for (int p = ((positionLine.get(currentIndexLine - 1))+4); p < position; p++) {
-                                        System.out.print(receiveData.get(p) + " ");
-                                        Color color = new Color(receiveData.get(p), receiveData.get(p), receiveData.get(p));
+                                    for (int pixelValue = ((positionLine.get(currentIndexLine - 1)) + numberKeyLetters + 1); pixelValue < position; pixelValue++) {
+                                        System.out.print(receiveData.get(pixelValue) + " ");
+                                        Color color = new Color(receiveData.get(pixelValue), receiveData.get(pixelValue), receiveData.get(pixelValue));
 
                                         bufferedImage.setRGB(column, numberLine, color.getRGB());
                                         column++;
@@ -101,7 +101,7 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
 
             }
 
-    }
+        }
         /*for (int countLine1 =0; countLine1 < (positionLine.size())-1; countLine1++) {
             for (int k = positionLine.get(countLine1); k < (positionLine.get(countLine1+1) - positionLine.get(countLine1)); k++) {
                 System.out.print(receiveData.get(k) + " ");
@@ -125,7 +125,7 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
         /*BufferedImage scaleImage = new BufferedImage(graphicsPanel.getWidthRealViewImg(), graphicsPanel.getHeightRealViewImg(), BufferedImage.TYPE_BYTE_GRAY);
         Graphics2D graphics = scaleImage.createGraphics();
         Graphics gr =scaleImage.getGraphics();*/
-    //gr.fillOval(100, 100, 1000, 700);
+        //gr.fillOval(100, 100, 1000, 700);
 
 
         /*graphics.drawImage(bufferedImage, 0, 0, imagePanel.getWidthRealViewImg(), imagePanel.getHeightRealViewImg(), null);
@@ -180,7 +180,7 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
             e1.printStackTrace();
         }
     return "";*/
-}
+    }
 
     /**
      * EDT part of loader. This method is called in EDT
