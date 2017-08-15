@@ -4,22 +4,17 @@ import jssc.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.CancellationException;
 
 /**
  * Created by Zoxy1 on 20.07.17.
@@ -196,7 +191,7 @@ public class DataReceiver extends JFrame {
                         BorderFactory.createEmptyBorder(1, 1, 1, 1)));
 
                 frame.add(cancel, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.LAST_LINE_START, GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 0, 0));
-                cancel.addActionListener(new CancelActionListener());
+                cancel.addActionListener(new StopActionListener());
 
                 progressBar.setMinimum(0);
                 progressBar.setMaximum(100);
@@ -333,7 +328,7 @@ public class DataReceiver extends JFrame {
 
     }
 
-    public class CancelActionListener implements ActionListener {
+    public class StopActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (loaderText != null) {
@@ -378,7 +373,6 @@ public class DataReceiver extends JFrame {
          */
         @Override
         public void stopLoading() {
-            progressBarPanel.setVisible(false);
             loaderText = null;
             exitTread =  false;
         }
