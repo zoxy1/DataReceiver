@@ -369,7 +369,6 @@ public class DataReceiver extends JFrame {
         public void startLoading() {
             imagePanel.setImage(null);
             imagePanel.updateUI();
-            progressBar.setValue(0);
             progressBarPanel.setVisible(true);
             lineTextExeption.setText("Wait receive the picture");
         }

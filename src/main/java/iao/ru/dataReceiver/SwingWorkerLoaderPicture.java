@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Created by Zoxy1 on 09.08.17.
  */
-public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage> {
+public class SwingWorkerLoaderPicture extends SwingWorker<String, DataToUI> {
     /**
      * UI callback
      */
@@ -56,7 +56,7 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
         int type = BufferedImage.TYPE_BYTE_GRAY;
         ArrayList<Integer> receiveData = new ArrayList<Integer>();
         ArrayList<Integer> positionLine = new ArrayList<Integer>();
-        BufferedImage bufferedImage;
+        DataToUI dataToUI = new DataToUI();
         int numberLine = 0;
         while (true) {
             if (exitTread) {
@@ -76,19 +76,19 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
                                 if (positionLine.size() >= 2) {
                                     int currentIndexLine = positionLine.size() - 1;
                                     int width = position - ((positionLine.get(currentIndexLine - 1)) + numberKeyLetters + 1);
-                                    bufferedImage = BufferedImageSingleton.getInstanse(width, width, type);
+                                    dataToUI.setBufferedImage(BufferedImageSingleton.getInstanse(width, width, type));
                                     int column = 0;
                                     for (int pixelValue = ((positionLine.get(currentIndexLine - 1)) + numberKeyLetters + 1); pixelValue < position; pixelValue++) {
                                         System.out.print(receiveData.get(pixelValue) + " ");
                                         Color color = new Color(receiveData.get(pixelValue), receiveData.get(pixelValue), receiveData.get(pixelValue));
-                                        if (column < bufferedImage.getWidth() && numberLine < bufferedImage.getHeight()) {
-                                            bufferedImage.setRGB(column, numberLine, color.getRGB());
+                                        if (column < dataToUI.getBufferedImage().getWidth() && numberLine < dataToUI.getBufferedImage().getHeight()) {
+                                            dataToUI.getBufferedImage().setRGB(column, numberLine, color.getRGB());
                                         }
                                         column++;
                                     }
                                     System.out.println(" ");
-                                    publish(bufferedImage);
-                                    setProgress(numberLine);
+                                    dataToUI.setNumberLine(numberLine);
+                                    publish(dataToUI);
                                     numberLine++;
                                 }
                             }
@@ -109,12 +109,11 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, BufferedImage>
      *               {@link SwingWorker#publish(Object[])}
      */
     @Override
-    protected void process(List<BufferedImage> chunks) {
-        for (BufferedImage bufferedImage : chunks) {
-            ui.appendPixel(bufferedImage);
+    protected void process(List<DataToUI> chunks) {
+        for (DataToUI dataToUI : chunks) {
+            ui.appendPixel(dataToUI.getBufferedImage());
+            ui.setProgress(dataToUI.getNumberLine());
         }
-
-        ui.setProgress(getProgress());
     }
 
     /**
