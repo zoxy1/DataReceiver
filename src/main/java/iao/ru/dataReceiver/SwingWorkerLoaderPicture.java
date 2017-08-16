@@ -79,6 +79,7 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, DataToUI> {
                                     int currentIndexLine = positionLine.size() - 1;
                                     int width = position - ((positionLine.get(currentIndexLine - 1)) + numberKeyLetters + 1);
                                     dataToUI.setBufferedImage(BufferedImageSingleton.getInstanse(width, width, type));
+                                    dataToUI.setWidthReceiveImage(width);
                                     int column = 0;
                                     for (int pixelValue = ((positionLine.get(currentIndexLine - 1)) + numberKeyLetters + 1); pixelValue < position; pixelValue++) {
                                         System.out.print(receiveData.get(pixelValue) + " ");
@@ -115,6 +116,7 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, DataToUI> {
         for (DataToUI dataToUI : chunks) {
             ui.appendPixel(dataToUI.getBufferedImage());
             ui.setProgress(dataToUI.getNumberLine());
+            ui.setText(dataToUI.getWidthReceiveImage());
         }
     }
 

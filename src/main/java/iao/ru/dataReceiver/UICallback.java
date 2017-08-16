@@ -13,7 +13,7 @@ import java.awt.image.BufferedImage;
 public interface UICallback {
 
     //@RequiresEDT
-    void setText(String text);
+    void setText(int widthReceiveImage);
 
     /**
      * Sets current progress. Values should be in the range [0,100]. This method can be called from outside EDT.

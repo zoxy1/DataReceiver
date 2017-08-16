@@ -89,6 +89,5 @@ public class SwingWorkerLoaderText extends SwingWorker<String, Integer> {
     @Override
     protected void done() {
         ui.stopLoading();
-        ui.setText("File transmitted");
     }
 }

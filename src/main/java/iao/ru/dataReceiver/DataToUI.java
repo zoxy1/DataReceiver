@@ -9,7 +9,7 @@ public class DataToUI {
 
     private BufferedImage bufferedImage;
     private int numberLine;
-
+    private int widthReceiveImage;
     public int getNumberLine() {
         return numberLine;
     }
@@ -24,5 +24,13 @@ public class DataToUI {
 
     public void setBufferedImage(BufferedImage bufferedImage) {
         this.bufferedImage = bufferedImage;
+    }
+
+    public int getWidthReceiveImage() {
+        return widthReceiveImage;
+    }
+
+    public void setWidthReceiveImage(int widthReceiveImage) {
+        this.widthReceiveImage = widthReceiveImage;
     }
 }

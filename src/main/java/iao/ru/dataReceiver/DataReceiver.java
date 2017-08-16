@@ -348,8 +348,8 @@ public class DataReceiver extends JFrame {
     public class UICallbackImpl implements UICallback {
 
         @Override
-        public void setText(final String text) {
-            lineTextExeption.setText(text);
+        public void setText(final int widthReceiveImage) {
+            pictureLabel.setText("Width receive picture:" + widthReceiveImage);
         }
 
         @Override
