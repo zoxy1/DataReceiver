@@ -58,6 +58,7 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, DataToUI> {
         ArrayList<Integer> positionLine = new ArrayList<Integer>();
         DataToUI dataToUI = new DataToUI();
         int numberLine = 0;
+        int lastPosition = 0;
         while (true) {
             if (exitTread) {
                 break;
@@ -69,10 +70,11 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, DataToUI> {
                 receiveData.add(byteRead);
                 int numberKeyLetters = 4;
                 if (receiveData.size() > numberKeyLetters) {
-                    for (int position = 0; position < (receiveData.size() - numberKeyLetters); position++) {
+                    for (int position = lastPosition + numberKeyLetters; position < (receiveData.size() - numberKeyLetters); position++) {
                         if (receiveData.get(position) == 108 && receiveData.get(position + 1) == 105 && receiveData.get(position + 2) == 110 && receiveData.get(position + 3) == 101 && receiveData.get(position + numberKeyLetters) == 32) {
                             if (!(positionLine.contains(position))) {
                                 positionLine.add(position);
+                                lastPosition = position;
                                 if (positionLine.size() >= 2) {
                                     int currentIndexLine = positionLine.size() - 1;
                                     int width = position - ((positionLine.get(currentIndexLine - 1)) + numberKeyLetters + 1);
