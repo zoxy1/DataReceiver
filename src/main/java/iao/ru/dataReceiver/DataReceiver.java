@@ -28,7 +28,7 @@ public class DataReceiver extends JFrame {
     private JLabel lineTextExeption = new JLabel();
     private JLabel developedBy = new JLabel("Developed by Andrey Kudryavtsev");
     private SerialPort serialPortOpen = new SerialPort("COM1");
-    private int portSpeed = 115200;
+    private int portSpeed = 9600;
     private ArrayList<JRadioButtonMenuItem> jRadioButtonSpeedMenuItems = new ArrayList<JRadioButtonMenuItem>();
     private JLabel pictureLabel = new JLabel("");
     private ImagePanel imagePanel = new ImagePanel();
@@ -92,7 +92,7 @@ public class DataReceiver extends JFrame {
                 jRadioButtonSpeedMenuItems.add(new JRadioButtonMenuItem("128000"));
                 jRadioButtonSpeedMenuItems.add(new JRadioButtonMenuItem("256000"));
 
-                jRadioButtonSpeedMenuItems.get(10).setSelected(true);
+                jRadioButtonSpeedMenuItems.get(5).setSelected(true);
 
                 ButtonGroup buttonGroupSpeed = new ButtonGroup();
 
