@@ -68,10 +68,10 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, DataToUI> {
             while (serialPortOpen.getInputBufferBytesCount() > 0) {
                 int byteRead = (serialPortOpen.readBytes(1)[0]) & 0xFF;
                 receiveData.add(byteRead);
-                int numberKeyLetters = 4;
+                int numberKeyLetters = 3;
                 if (receiveData.size() > numberKeyLetters) {
-                    for (int position = lastPosition; position < (receiveData.size() - numberKeyLetters); position++) {
-                        if (receiveData.get(position) == 108 && receiveData.get(position + 1) == 105 && receiveData.get(position + 2) == 110 && receiveData.get(position + 3) == 101 && receiveData.get(position + numberKeyLetters) == 32) {
+                    for (int position = lastPosition + numberKeyLetters; position < (receiveData.size() - numberKeyLetters); position++) {
+                        if (receiveData.get(position) == 108 && receiveData.get(position + 1) == 105 && receiveData.get(position + 2) == 110 && receiveData.get(position + 3) == 101) {
                             if (!(positionLine.contains(position))) {
                                 positionLine.add(position);
                                 lastPosition = position;
