@@ -41,6 +41,10 @@ public class DataReceiver extends JFrame {
     public BufferedImage bufferedImage;
     private boolean exitTread = false;
 
+    public DataReceiver() throws HeadlessException {
+        super();
+    }
+
     void init() {
         JFrame.setDefaultLookAndFeelDecorated(true);
         SwingUtilities.invokeLater(new Runnable() {

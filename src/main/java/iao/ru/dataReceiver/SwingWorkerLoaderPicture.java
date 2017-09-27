@@ -82,14 +82,14 @@ public class SwingWorkerLoaderPicture extends SwingWorker<String, DataToUI> {
                                     dataToUI.setWidthReceiveImage(width);
                                     int column = 0;
                                     for (int pixelValue = ((positionLine.get(currentIndexLine - 1)) + numberKeyLetters + 1); pixelValue < position; pixelValue++) {
-                                        System.out.print(receiveData.get(pixelValue) + " ");
+                                        //System.out.print(receiveData.get(pixelValue) + " ");
                                         Color color = new Color(receiveData.get(pixelValue), receiveData.get(pixelValue), receiveData.get(pixelValue));
                                         if (column < dataToUI.getBufferedImage().getWidth() && numberLine < dataToUI.getBufferedImage().getHeight()) {
                                             dataToUI.getBufferedImage().setRGB(column, numberLine, color.getRGB());
                                         }
                                         column++;
                                     }
-                                    System.out.println(" ");
+                                    //System.out.println(" ");
                                     dataToUI.setNumberLine(numberLine);
                                     publish(dataToUI);
                                     numberLine++;
